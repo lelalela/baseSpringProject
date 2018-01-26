@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.base.project.mapper.UserMapper">
+	<select id="userList" resultType="User">
+		SELECT * FROM APP_USER
+	</select>
+	
+	<insert id="userAddMapper" parameterType="User">
+		INSERT INTO APP_USER(EMAIL, FIRST_NAME, LAST_NAME, PASSWORD, SSO_ID)
+		VALUES(#{email}, #{firstName}, #{lastName}, #{password}, #{ssoId})
+	</insert>
+	
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.or.nhis.admin.mapper.AdminMapper">
+
+	<!-- 가상 기관 리스트 -->
+	<select id="selectVirtualAdminList" resultType="cMap" parameterType="dMap">
+		SELECT ADM_SEQ_NO, ADM_ADMIN_SYM, ADM_ADMIN_NAM, ADM_ADMIN_TYP
+			 , CONVERT(CHAR(10), ADM_REG_DTTM, 102) AS ADM_REG_DTTM
+		  FROM VIRTUAL_ADMIN_MNG
+		 ORDER BY ADM_SEQ_NO
+	</select>
+	
+	<!-- 가상 기관 삭제 -->
+	<delete id="deleteVirtualAdminInfo" parameterType="dMap">
+		DELETE
+		  FROM VIRTUAL_ADMIN_MNG
+		 WHERE 1 = 1
+		 <foreach collection="admSeqNoArr" item="item" open="AND ADM_SEQ_NO IN (" close=")" separator=",">#{item}</foreach>
+	</delete>
+	
+	<!-- 가상 기관 등록 / 수정 -->
+	<insert id="mergeVirtualInfo" parameterType="dMap">
+		MERGE VIRTUAL_ADMIN_MNG AS T
+		USING (SELECT #{admAdminSym}) AS S (ADM_ADMIN_SYM)
+		ON T.ADM_ADMIN_SYM = S.ADM_ADMIN_SYM
+		WHEN MATCHED THEN
+			UPDATE
+			   SET ADM_ADMIN_NAM = #{admAdminNam}, ADM_ADMIN_TYP = #{admAdminTyp}
+		WHEN NOT MATCHED THEN
+			INSERT
+				 (ADM_ADMIN_SYM, ADM_ADMIN_NAM, ADM_ADMIN_TYP, ADM_REG_DTTM)
+			VALUES
+				 (#{admAdminSym}, #{admAdminNam}, #{admAdminTyp}, GETDATE());
+	</insert>
+
+</mapper>
